@@ -16,6 +16,8 @@ app.use(morgan('dev'));
 
 app.use('/users', usersRoute);
 
+app.use('/file', express.static('./uploads'));
+
 app.use((err, req, res, next) => {
     const codeStatus = err.status || 500;
     const message = err.message || 'Internal Server Error';

@@ -116,7 +116,9 @@ const register = async (req, res, next) => {
       if (!user) {
         return next(createError(403, 'please enter correct email'));
       }
-  
+      
+      console.log('INI LOGIN',user)
+
       const resultHash = await bcrypt.compare(password, user.password);
   
       if (!resultHash) return next(createError(403, 'sorry you entered wrong password'));
@@ -149,11 +151,33 @@ const register = async (req, res, next) => {
     }
   };
 
+  const addPhoto = async (req, res, next) => {
+    try {
+      // const fileName = req.file.filename;
+      const email = req.email;
+      const photo = req.file.filename;
+      const updatedAt = new Date();
+      const data = {
+        photo: `http://localhost:2002/file/${photo}`,
+        create_at: updatedAt
+      };
+      const result = await modUsers.updatePhoto(data, email);
+      helpers.resTransfer(res, data, 200, 'Succes Upload');
+      // console.log(req.email);
+      // console.log(req.file);
+      console.log(result);
+    } catch (error) {
+      console.log(error.message);
+      next({ status: 500, message: 'Internal Server Error!' });
+    }
+  };
+
   module.exports = {
       getUsers,
       postUsers,
       register,
       login,
       profile,
+      addPhoto
       // getAllUser
   }
